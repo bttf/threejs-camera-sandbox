@@ -77,6 +77,7 @@ function animate() {
 const Sandbox: FC<{}> = () => {
   const [scene, setScene] = useState<THREE.Scene | null>(null);
   const [cameras, setCameras] = useState<THREE.Camera[]>([]);
+  const [defaultCamera, ...userCameras] = cameras;
 
   useEffect(() => {
     const { camera, scene } = init();
@@ -90,11 +91,23 @@ const Sandbox: FC<{}> = () => {
     animate();
   }, [scene, cameras]);
 
+  const addCamera = () => {
+    // create new camera
+    const camera = new THREE.PerspectiveCamera(50, aspect, 1, 10000);
+    camera.position.z = 500;
+    setCameras([...cameras, camera]);
+  };
+
   if (!scene) return null;
 
   return (
     <div className="flex flex-col items-center">
-      {cameras.map((camera, i) => (
+      <div className="my-2">Default Camera</div>
+      <Renderer camera={defaultCamera} scene={scene} />
+      <div className="my-2" onClick={addCamera}>
+        + Add Camera
+      </div>
+      {userCameras.map((camera, i) => (
         <Renderer key={i} camera={camera} scene={scene} />
       ))}
     </div>
