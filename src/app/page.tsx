@@ -38,12 +38,7 @@ export default function Home() {
   return (
     <div className="p-4">
       <Header />
-
       <Sandbox />
-
-      <div className="text-xs py-2 text-gray-500">
-        © {new Date().getFullYear()} Adnan Chowdhury
-      </div>
     </div>
   );
 }

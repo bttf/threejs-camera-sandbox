@@ -1,114 +1,65 @@
 "use client";
 
-import { FC, useEffect, useRef, useState } from "react";
-import * as THREE from "three";
-import Renderer from "@/app/components/Renderer";
+import { FC, useCallback, useEffect, useState } from "react";
+import {
+  SandboxCamera,
+  initWorld,
+  addCamera as _addCamera,
+  removeCamera as _removeCamera,
+} from "@/lib/cameraWorld";
+import Camera from "./Camera";
 
-// all viewports will have equal width x height
-let aspect = 1;
+const Sandbox: FC = () => {
+  const [cameras, setCameras] = useState<SandboxCamera[]>([]);
 
-let container: HTMLDivElement;
-let camera: THREE.PerspectiveCamera;
-let scene: THREE.Scene;
-let renderer: THREE.WebGLRenderer;
-let mesh: THREE.Mesh;
-let cameraRig: THREE.Group;
-let activeCamera: THREE.Camera;
-let activeHelper: THREE.CameraHelper;
-let cameraPerspective: THREE.PerspectiveCamera;
-let cameraOrtho: THREE.OrthographicCamera;
-let cameraPerspectiveHelper: THREE.CameraHelper;
-let cameraOrthoHelper: THREE.CameraHelper;
-
-function _genPoints() {
-  const geometry = new THREE.BufferGeometry();
-  const vertices = [];
-
-  for (let i = 0; i < 10000; i++) {
-    vertices.push(THREE.MathUtils.randFloatSpread(2000)); // x
-    vertices.push(THREE.MathUtils.randFloatSpread(2000)); // y
-    vertices.push(THREE.MathUtils.randFloatSpread(2000)); // z
-  }
-
-  geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(vertices, 3)
-  );
-
-  const particles = new THREE.Points(
-    geometry,
-    new THREE.PointsMaterial({ color: 0x888888 })
-  );
-
-  return particles;
-}
-
-function init() {
-  // init scene
-  scene = new THREE.Scene();
-
-  // default cam
-  camera = new THREE.PerspectiveCamera(50, aspect, 1, 10000);
-  camera.position.z = 2500;
-
-  // white "planet"
-  mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(100, 16, 8),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
-  );
-  scene.add(mesh);
-
-  // stars
-  scene.add(_genPoints());
-
-  return { camera, scene };
-}
-
-function animate() {
-  requestAnimationFrame(animate);
-
-  const r = Date.now() * 0.0005;
-
-  mesh.position.x = 700 * Math.cos(r);
-  mesh.position.z = 700 * Math.sin(r);
-  mesh.position.y = 700 * Math.sin(r);
-}
-
-const Sandbox: FC<{}> = () => {
-  const [scene, setScene] = useState<THREE.Scene | null>(null);
-  const [cameras, setCameras] = useState<THREE.Camera[]>([]);
-  const [defaultCamera, ...userCameras] = cameras;
-
+  // initialize
   useEffect(() => {
-    const { camera, scene } = init();
-    setScene(scene);
+    const camera = initWorld();
     setCameras([camera]);
   }, []);
 
-  useEffect(() => {
-    if (!scene) return;
-    if (cameras.length === 0 || cameras.length > 1) return;
-    animate();
-  }, [scene, cameras]);
+  const addCamera = useCallback(() => {
+    const newCameras = _addCamera({
+      type: "perspective",
+      fov: 75,
+      aspect: 1,
+      near: 1,
+      far: 10000,
+      position: { z: 500 / cameras.length },
+    });
+    setCameras([...newCameras]);
+  }, [cameras, setCameras]);
 
-  const addCamera = () => {
-    // create new camera
-    const camera = new THREE.PerspectiveCamera(50, aspect, 1, 10000);
-    camera.position.z = 500;
-    setCameras([...cameras, camera]);
-  };
+  const removeCamera = useCallback(
+    (camera: SandboxCamera) => {
+      const cameras = _removeCamera(camera);
+      setCameras([...cameras]);
+    },
+    [setCameras]
+  );
 
-  if (!scene) return null;
+  const [defaultCamera, ...userCameras] = cameras;
+
+  if (!defaultCamera) return null;
 
   return (
     <div className="flex flex-col items-center">
       <div className="my-2">Default Camera</div>
-      <Renderer camera={defaultCamera} scene={scene} />
-      <div className="my-2" onClick={addCamera}>
+      <Camera camera={defaultCamera} />
+      <button className="my-2 px-2 py-1" onClick={addCamera}>
         + Add Camera
-      </div>
-      {userCameras.map((camera, i) => (
-        <Renderer key={i} camera={camera} scene={scene} />
+      </button>
+      {userCameras.reverse().map((camera, i) => (
+        <div key={camera.camera.uuid}>
+          <div className="my-2">{`Camera #${userCameras.length - i}`}</div>
+          <Camera camera={camera} />
+          <button
+            className="my-2 px-2 py-1"
+            onClick={() => removeCamera(camera)}
+          >
+            Remove Camera
+          </button>
+        </div>
       ))}
     </div>
   );
