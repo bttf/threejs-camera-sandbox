@@ -49,7 +49,7 @@ function init() {
 
   // default cam
   camera = new THREE.PerspectiveCamera(50, aspect, 1, 10000);
-  camera.position.z = 2500;
+  camera.position.z = 500;
 
   // white "planet"
   mesh = new THREE.Mesh(
@@ -64,14 +64,16 @@ function init() {
   return { camera, scene };
 }
 
+let _animFrameId: number;
 function animate() {
-  requestAnimationFrame(animate);
+  _animFrameId = requestAnimationFrame(animate);
 
   const r = Date.now() * 0.0005;
 
-  mesh.position.x = 700 * Math.cos(r);
-  mesh.position.z = 700 * Math.sin(r);
-  mesh.position.y = 700 * Math.sin(r);
+  mesh.rotation.y += 0.005;
+  // mesh.position.x = 700 * Math.cos(r);
+  // mesh.position.z = 700 * Math.sin(r);
+  // mesh.position.y = 700 * Math.sin(r);
 }
 
 const Sandbox: FC<{}> = () => {
@@ -86,9 +88,8 @@ const Sandbox: FC<{}> = () => {
   }, []);
 
   useEffect(() => {
-    if (!scene) return;
-    if (cameras.length === 0 || cameras.length > 1) return;
-    animate();
+    if (!scene || !cameras.length) return;
+    if (!_animFrameId) animate();
   }, [scene, cameras]);
 
   const addCamera = () => {
