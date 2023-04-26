@@ -6,7 +6,7 @@ import {
   initWorld,
   addCamera as _addCamera,
   removeCamera as _removeCamera,
-} from "@/lib/cameraWorld";
+} from "@/app/lib/cameraWorld";
 import Camera from "./Camera";
 
 const Sandbox: FC = () => {

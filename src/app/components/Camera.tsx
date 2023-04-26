@@ -1,6 +1,6 @@
 "use client";
 
-import { SandboxCamera } from "@/lib/cameraWorld";
+import { SandboxCamera } from "@/app/lib/cameraWorld";
 import clsx from "clsx";
 import { FC, useEffect, useRef } from "react";
 
