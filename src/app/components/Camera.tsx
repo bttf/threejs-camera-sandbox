@@ -4,7 +4,11 @@ import { SandboxCamera } from "@/app/lib/cameraWorld";
 import clsx from "clsx";
 import { FC, useEffect, useRef } from "react";
 
-const Camera: FC<{ camera: SandboxCamera }> = ({ camera }) => {
+const Camera: FC<{
+  camera: SandboxCamera;
+  underControl: boolean;
+  onClick: () => void;
+}> = ({ camera, underControl, onClick: _onClick }) => {
   const ref = useRef<HTMLDivElement>(null);
   const canvas: HTMLCanvasElement = camera.canvas;
 
@@ -17,7 +21,10 @@ const Camera: FC<{ camera: SandboxCamera }> = ({ camera }) => {
   return (
     <div
       ref={ref}
-      className={clsx("my-2", "h-80", "w-80", "rounded", "overflow-hidden")}
+      className={clsx("my-2", "h-80", "w-80", "rounded", "overflow-hidden", {
+        "border-2 border-red-500": underControl,
+      })}
+      onClick={_onClick}
     ></div>
   );
 };

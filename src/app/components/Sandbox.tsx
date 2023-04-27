@@ -11,6 +11,8 @@ import Camera from "./Camera";
 
 const Sandbox: FC = () => {
   const [cameras, setCameras] = useState<SandboxCamera[]>([]);
+  const [cameraUnderControl, setCameraUnderControl] =
+    useState<SandboxCamera | null>(null);
 
   // initialize
   useEffect(() => {
@@ -45,14 +47,22 @@ const Sandbox: FC = () => {
   return (
     <div className="flex flex-col items-center">
       <div className="my-2">Default Camera</div>
-      <Camera camera={defaultCamera} />
+      <Camera
+        underControl={cameraUnderControl === defaultCamera}
+        camera={defaultCamera}
+        onClick={() => setCameraUnderControl(defaultCamera)}
+      />
       <button className="my-2 px-2 py-1" onClick={addCamera}>
         + Add Camera
       </button>
       {userCameras.reverse().map((camera, i) => (
         <div key={camera.camera.uuid}>
           <div className="my-2">{`Camera #${userCameras.length - i}`}</div>
-          <Camera camera={camera} />
+          <Camera
+            underControl={cameraUnderControl === camera}
+            camera={camera}
+            onClick={() => setCameraUnderControl(camera)}
+          />
           <button
             className="my-2 px-2 py-1"
             onClick={() => removeCamera(camera)}
