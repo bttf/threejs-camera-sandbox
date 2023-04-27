@@ -5,7 +5,7 @@ import Sandbox from "@/app/components/Sandbox";
 const gFont = Stick_No_Bills({ subsets: ["latin"] });
 
 const Header = () => (
-  <>
+  <div className="p-4 md:px-0">
     <div
       className={clsx(
         "text-4xl",
@@ -31,12 +31,12 @@ const Header = () => (
         Adnan Chowdhury
       </a>
     </div>
-  </>
+  </div>
 );
 
 export default function Home() {
   return (
-    <div className="p-4">
+    <div className="md:max-w-7xl md:mx-auto">
       <Header />
       <Sandbox />
     </div>
