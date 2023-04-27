@@ -1,22 +1,48 @@
 "use client";
 
-import { SandboxCamera } from "@/app/lib/cameraWorld";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import clsx from "clsx";
 import { FC, useEffect, useRef } from "react";
+import { SandboxCamera } from "@/app/lib/cameraWorld";
+
+let _orbitControls: OrbitControls | null = null;
 
 const Camera: FC<{
-  camera: SandboxCamera;
+  sandboxCamera: SandboxCamera;
   underControl: boolean;
   onClick: () => void;
-}> = ({ camera, underControl, onClick: _onClick }) => {
+}> = ({ sandboxCamera, underControl, onClick: _onClick }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const canvas: HTMLCanvasElement = camera.canvas;
+  const canvas: HTMLCanvasElement = sandboxCamera.canvas;
 
   useEffect(() => {
     if (ref.current && canvas && !ref.current.contains(canvas)) {
       ref.current.appendChild(canvas);
     }
   }, [canvas]);
+
+  useEffect(() => {
+    if (underControl && !_orbitControls) {
+      _orbitControls = new OrbitControls(sandboxCamera.camera, canvas);
+      // none of the below is working
+      _orbitControls.enablePan = true;
+      _orbitControls.keys = {
+        LEFT: "A",
+        UP: "W",
+        RIGHT: "D",
+        BOTTOM: "S",
+      };
+      _orbitControls.mouseButtons = {
+        MIDDLE: THREE.MOUSE.ROTATE,
+        RIGHT: THREE.MOUSE.DOLLY,
+        LEFT: THREE.MOUSE.PAN,
+      };
+    } else if (_orbitControls) {
+      _orbitControls.dispose();
+      _orbitControls = null;
+    }
+  }, [underControl]);
 
   return (
     <div

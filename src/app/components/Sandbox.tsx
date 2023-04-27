@@ -49,7 +49,7 @@ const Sandbox: FC = () => {
       <div className="my-2">Default Camera</div>
       <Camera
         underControl={cameraUnderControl === defaultCamera}
-        camera={defaultCamera}
+        sandboxCamera={defaultCamera}
         onClick={() => setCameraUnderControl(defaultCamera)}
       />
       <button className="my-2 px-2 py-1" onClick={addCamera}>
@@ -60,7 +60,7 @@ const Sandbox: FC = () => {
           <div className="my-2">{`Camera #${userCameras.length - i}`}</div>
           <Camera
             underControl={cameraUnderControl === camera}
-            camera={camera}
+            sandboxCamera={camera}
             onClick={() => setCameraUnderControl(camera)}
           />
           <button
