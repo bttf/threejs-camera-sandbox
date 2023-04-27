@@ -12,7 +12,8 @@ const Camera: FC<{
   sandboxCamera: SandboxCamera;
   underControl: boolean;
   onClick: () => void;
-}> = ({ sandboxCamera, underControl, onClick: _onClick }) => {
+  large?: boolean;
+}> = ({ sandboxCamera, underControl, onClick: _onClick, large }) => {
   const ref = useRef<HTMLDivElement>(null);
   const canvas: HTMLCanvasElement = sandboxCamera.canvas;
 
@@ -25,18 +26,10 @@ const Camera: FC<{
   useEffect(() => {
     if (underControl && !_orbitControls) {
       _orbitControls = new OrbitControls(sandboxCamera.camera, canvas);
-      // none of the below is working
-      _orbitControls.enablePan = true;
-      _orbitControls.keys = {
-        LEFT: "A",
-        UP: "W",
-        RIGHT: "D",
-        BOTTOM: "S",
-      };
       _orbitControls.mouseButtons = {
         MIDDLE: THREE.MOUSE.ROTATE,
-        RIGHT: THREE.MOUSE.DOLLY,
-        LEFT: THREE.MOUSE.PAN,
+        LEFT: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN,
       };
     } else if (_orbitControls) {
       _orbitControls.dispose();
@@ -47,8 +40,11 @@ const Camera: FC<{
   return (
     <div
       ref={ref}
-      className={clsx("my-2", "h-80", "w-80", "rounded", "overflow-hidden", {
+      className={clsx("my-2", "rounded", "overflow-hidden", "w-80", "h-80", {
         "border-2 border-red-500": underControl,
+
+        "md:w-[40rem]": large,
+        "md:h-[40rem]": large,
       })}
       onClick={_onClick}
     ></div>

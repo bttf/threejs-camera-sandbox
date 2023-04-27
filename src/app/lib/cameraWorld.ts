@@ -29,8 +29,8 @@ type CameraArgs = {
  */
 let cameras: SandboxCamera[] = [];
 const aspect = 1; // all viewports will have square aspect ratio
-const CONTAINER_HEIGHT = 320; // hard-coded for the moment, matching tailwind's h-80 styling (320px)
-const CONTAINER_WIDTH = 320;
+const CONTAINER_HEIGHT = 640;
+const CONTAINER_WIDTH = 640;
 let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let mesh: THREE.Mesh;
@@ -76,8 +76,8 @@ const createCanvas = () => {
   const canvas = document.createElement("canvas");
   canvas.width = CONTAINER_WIDTH * 2;
   canvas.height = CONTAINER_HEIGHT * 2;
-  canvas.style.height = `${CONTAINER_HEIGHT}px`;
-  canvas.style.width = `${CONTAINER_WIDTH}px`;
+  canvas.style.height = "inherit";
+  canvas.style.width = "inherit";
   return canvas;
 };
 
@@ -105,8 +105,8 @@ const updateCameraCanvas = ({
       containerCanvasHeight,
       0,
       0,
-      containerCanvasWidth,
-      containerCanvasHeight
+      targetCanvas.width,
+      targetCanvas.height
     );
   return targetCanvas;
 };
