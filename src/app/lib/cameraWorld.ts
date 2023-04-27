@@ -184,12 +184,14 @@ export const addCamera = ({
     type === "perspective"
       ? new THREE.PerspectiveCamera(fov, aspect, near, far)
       : new THREE.OrthographicCamera(left, right, top, bottom, near, far);
+  const cameraHelper = new THREE.CameraHelper(camera);
 
   camera.position.x = position?.x ?? camera.position.x;
   camera.position.y = position?.y ?? camera.position.y;
   camera.position.z = position?.z ?? camera.position.z;
 
   scene.add(camera);
+  scene.add(cameraHelper);
 
   cameras.push({ camera, canvas: createCanvas() });
 
