@@ -40,7 +40,7 @@ const Camera: FC<{
   return (
     <div
       ref={ref}
-      className={clsx("my-2", "rounded", "overflow-hidden", "w-80", "h-80", {
+      className={clsx("rounded", "overflow-hidden", "w-80", "h-80", {
         "border-2 border-red-500": underControl,
 
         "md:w-[40rem]": large,

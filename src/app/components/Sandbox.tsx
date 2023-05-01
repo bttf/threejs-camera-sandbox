@@ -47,32 +47,37 @@ const Sandbox: FC = () => {
   return (
     <div className="flex flex-col items-center md:items-start md:flex-row">
       <div>
-        <div className="my-2">Default Camera</div>
+        <div className="h-12 flex items-center justify-between">
+          <div>Default camera</div>
+
+          <button className="my-2 px-2 py-1" onClick={addCamera}>
+            + Add Camera
+          </button>
+        </div>
         <Camera
           large
           underControl={cameraUnderControl === defaultCamera}
           sandboxCamera={defaultCamera}
           onClick={() => setCameraUnderControl(defaultCamera)}
         />
-        <button className="my-2 px-2 py-1" onClick={addCamera}>
-          + Add Camera
-        </button>
       </div>
-      <div className="md:flex-1 md:flex md:flex-wrap">
+      <div className="md:flex-1 md:flex md:flex-wrap md:overflow-y-auto md:h-full">
         {userCameras.reverse().map((camera, i) => (
           <div key={camera.camera.uuid}>
-            <div className="my-2">{`Camera #${userCameras.length - i}`}</div>
+            <div className="h-8 flex items-center justify-between">
+              <div className="my-2">{`Camera #${userCameras.length - i}`}</div>
+              <button
+                className="my-2 px-2 py-1 text-xs"
+                onClick={() => removeCamera(camera)}
+              >
+                Remove camera
+              </button>
+            </div>
             <Camera
               underControl={cameraUnderControl === camera}
               sandboxCamera={camera}
               onClick={() => setCameraUnderControl(camera)}
             />
-            <button
-              className="my-2 px-2 py-1"
-              onClick={() => removeCamera(camera)}
-            >
-              Remove Camera
-            </button>
           </div>
         ))}
       </div>
