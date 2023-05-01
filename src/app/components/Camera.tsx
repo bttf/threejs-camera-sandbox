@@ -3,10 +3,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import clsx from "clsx";
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { SandboxCamera } from "@/app/lib/cameraWorld";
-
-let _orbitControls: OrbitControls | null = null;
 
 const Camera: FC<{
   sandboxCamera: SandboxCamera;
@@ -16,6 +14,9 @@ const Camera: FC<{
 }> = ({ sandboxCamera, underControl, onClick: _onClick, large }) => {
   const ref = useRef<HTMLDivElement>(null);
   const canvas: HTMLCanvasElement = sandboxCamera.canvas;
+  const [orbitControls, setOrbitControls] = useState<OrbitControls | null>(
+    null
+  );
 
   useEffect(() => {
     if (ref.current && canvas && !ref.current.contains(canvas)) {
@@ -24,18 +25,19 @@ const Camera: FC<{
   }, [canvas]);
 
   useEffect(() => {
-    if (underControl && !_orbitControls) {
-      _orbitControls = new OrbitControls(sandboxCamera.camera, canvas);
+    if (underControl && !orbitControls) {
+      const _orbitControls = new OrbitControls(sandboxCamera.camera, canvas);
       _orbitControls.mouseButtons = {
         MIDDLE: THREE.MOUSE.ROTATE,
         LEFT: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.PAN,
       };
-    } else if (_orbitControls) {
-      _orbitControls.dispose();
-      _orbitControls = null;
+      setOrbitControls(_orbitControls);
+    } else if (orbitControls && !underControl) {
+      orbitControls.dispose();
+      setOrbitControls(null);
     }
-  }, [underControl]);
+  }, [underControl, orbitControls, canvas, sandboxCamera]);
 
   return (
     <div

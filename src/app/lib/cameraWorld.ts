@@ -34,6 +34,7 @@ const CONTAINER_WIDTH = 640;
 let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let mesh: THREE.Mesh;
+let mesh2: THREE.Mesh;
 let _tick = 0;
 
 /**
@@ -51,8 +52,18 @@ const createWorld = () => {
     new THREE.SphereGeometry(100, 16, 8),
     new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
   );
+  // keep mesh global
   mesh = _mesh;
   scene.add(mesh);
+
+  // green "planet"
+  const _mesh2 = new THREE.Mesh(
+    new THREE.SphereGeometry(50, 16, 8),
+    new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true })
+  );
+  mesh2 = _mesh2;
+  mesh2.position.y = 150;
+  mesh.add(mesh2);
 
   // stars
   scene.add(genStarParticles());
@@ -113,6 +124,8 @@ const updateCameraCanvas = ({
 
 const animate = () => {
   mesh.rotation.y += 0.005;
+  mesh.children[0].position.x = mesh.position.x + 100;
+  mesh.children[0].rotation.y -= 0.02;
 };
 
 const render = (
@@ -189,6 +202,8 @@ export const addCamera = ({
   camera.position.x = position?.x ?? camera.position.x;
   camera.position.y = position?.y ?? camera.position.y;
   camera.position.z = position?.z ?? camera.position.z;
+
+  camera.lookAt(mesh.position);
 
   scene.add(camera);
   scene.add(cameraHelper);

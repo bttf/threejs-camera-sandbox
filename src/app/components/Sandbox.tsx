@@ -23,11 +23,14 @@ const Sandbox: FC = () => {
   const addCamera = useCallback(() => {
     const newCameras = _addCamera({
       type: "perspective",
-      fov: 75,
+      fov: 25,
       aspect: 1,
       near: 1,
-      far: 10000,
-      position: { z: 500 / cameras.length },
+      far: 500,
+      position: {
+        z: 200 - Math.random() * 400 + 100,
+        x: 200 - Math.random() * 400 + 100,
+      },
     });
     setCameras([...newCameras]);
   }, [cameras, setCameras]);
@@ -47,10 +50,13 @@ const Sandbox: FC = () => {
   return (
     <div className="flex flex-col items-center md:items-start md:flex-row">
       <div>
-        <div className="h-12 flex items-center justify-between">
+        <div className="h-12 flex items-center justify-between px-2">
           <div>Default camera</div>
 
-          <button className="my-2 px-2 py-1" onClick={addCamera}>
+          <button
+            className="my-2 px-2 py-1 bg-blue-300 rounded"
+            onClick={addCamera}
+          >
             + Add Camera
           </button>
         </div>
@@ -62,15 +68,15 @@ const Sandbox: FC = () => {
         />
       </div>
       <div className="md:flex-1 md:flex md:flex-wrap md:overflow-y-auto md:h-full">
-        {userCameras.reverse().map((camera, i) => (
+        {userCameras.map((camera, i) => (
           <div key={camera.camera.uuid}>
-            <div className="h-8 flex items-center justify-between">
-              <div className="my-2">{`Camera #${userCameras.length - i}`}</div>
+            <div className="h-12 flex items-center justify-between px-2">
+              <div className="my-2">{`Camera #${i + 1}`}</div>
               <button
-                className="my-2 px-2 py-1 text-xs"
+                className="my-2 px-2 py-1 bg-rose-300 rounded"
                 onClick={() => removeCamera(camera)}
               >
-                Remove camera
+                Remove
               </button>
             </div>
             <Camera
