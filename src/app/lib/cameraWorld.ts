@@ -7,7 +7,7 @@ import genStarParticles from "./genStarParticles";
 export type CameraView = {
   canvas: HTMLCanvasElement;
   camera: THREE.Camera;
-  cameraHelper: THREE.CameraHelper;
+  cameraHelper: THREE.CameraHelper | null;
 };
 
 type CameraArgs = {
@@ -175,7 +175,7 @@ export const initWorld = (): CameraView => {
   renderer = createRenderer(CONTAINER_WIDTH, CONTAINER_HEIGHT);
 
   // add to cameraViews
-  cameraViews.push({ camera, canvas: createCanvas() });
+  cameraViews.push({ camera, canvas: createCanvas(), cameraHelper: null });
 
   // kick off render loop
   requestAnimationFrame((time) => render(time, renderer, scene));
@@ -221,7 +221,7 @@ export const addCamera = ({
 export const removeCamera = (cameraView: CameraView) => {
   const { camera, cameraHelper } = cameraView;
   scene.remove(camera);
-  scene.remove(cameraHelper);
+  if (cameraHelper) scene.remove(cameraHelper);
   cameraViews = cameraViews.filter((c) => c !== cameraView);
   renderer.setSize(CONTAINER_WIDTH, CONTAINER_HEIGHT * cameraViews.length);
   return cameraViews;
