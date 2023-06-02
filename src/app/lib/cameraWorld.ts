@@ -4,14 +4,13 @@ import genStarParticles from "./genStarParticles";
 /**
  * types
  */
-export type SandboxCamera = {
+export type CameraView = {
   canvas: HTMLCanvasElement;
   camera: THREE.Camera;
 };
 
 type CameraArgs = {
   type: "perspective" | "orthographic";
-} & {
   fov?: number;
   aspect?: number;
   near?: number;
@@ -20,14 +19,13 @@ type CameraArgs = {
   right?: number;
   top?: number;
   bottom?: number;
-} & {
   position?: Partial<THREE.PerspectiveCamera["position"]>;
 };
 
 /**
  * variables
  */
-let cameras: SandboxCamera[] = [];
+let cameraViews: CameraView[] = [];
 const aspect = 1; // all viewports will have square aspect ratio
 const CONTAINER_HEIGHT = 640;
 const CONTAINER_WIDTH = 640;
@@ -52,6 +50,7 @@ const createWorld = () => {
     new THREE.SphereGeometry(100, 16, 8),
     new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
   );
+
   // keep mesh global
   mesh = _mesh;
   scene.add(mesh);
@@ -61,6 +60,8 @@ const createWorld = () => {
     new THREE.SphereGeometry(50, 16, 8),
     new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true })
   );
+
+  // keep global
   mesh2 = _mesh2;
   mesh2.position.y = 150;
   mesh.add(mesh2);
@@ -110,7 +111,7 @@ const updateCameraCanvas = ({
     ?.drawImage(
       sourceCanvas,
       0,
-      containerCanvasWidth * cameras.length -
+      containerCanvasWidth * cameraViews.length -
         containerCanvasHeight * (cameraIndex + 1),
       containerCanvasWidth,
       containerCanvasHeight,
@@ -143,8 +144,8 @@ const render = (
 
   animate();
 
-  cameras.forEach((sandboxCamera, cameraIndex) => {
-    const { canvas: targetCanvas, camera } = sandboxCamera;
+  cameraViews.forEach((cameraView, cameraIndex) => {
+    const { canvas: targetCanvas, camera } = cameraView;
 
     renderer.setViewport(
       0,
@@ -163,7 +164,7 @@ const render = (
   });
 };
 
-export const initWorld = (): SandboxCamera => {
+export const initWorld = (): CameraView => {
   // create scene and default camera
   const { scene: _scene, camera } = createWorld();
 
@@ -172,13 +173,13 @@ export const initWorld = (): SandboxCamera => {
 
   renderer = createRenderer(CONTAINER_WIDTH, CONTAINER_HEIGHT);
 
-  // add to cameras
-  cameras.push({ camera, canvas: createCanvas() });
+  // add to cameraViews
+  cameraViews.push({ camera, canvas: createCanvas() });
 
   // kick off render loop
   requestAnimationFrame((time) => render(time, renderer, scene));
 
-  return cameras[0];
+  return cameraViews[0];
 };
 
 export const addCamera = ({
@@ -208,18 +209,18 @@ export const addCamera = ({
   scene.add(camera);
   scene.add(cameraHelper);
 
-  cameras.push({ camera, canvas: createCanvas() });
+  cameraViews.push({ camera, canvas: createCanvas() });
 
   // update renderer size for new camera
-  renderer.setSize(CONTAINER_WIDTH, CONTAINER_HEIGHT * cameras.length);
+  renderer.setSize(CONTAINER_WIDTH, CONTAINER_HEIGHT * cameraViews.length);
 
-  return cameras;
+  return cameraViews;
 };
 
-export const removeCamera = (sandboxCamera: SandboxCamera) => {
-  const { camera } = sandboxCamera;
+export const removeCamera = (cameraView: CameraView) => {
+  const { camera } = cameraView;
   scene.remove(camera);
-  cameras = cameras.filter((c) => c !== sandboxCamera);
-  renderer.setSize(CONTAINER_WIDTH, CONTAINER_HEIGHT * cameras.length);
-  return cameras;
+  cameraViews = cameraViews.filter((c) => c !== cameraView);
+  renderer.setSize(CONTAINER_WIDTH, CONTAINER_HEIGHT * cameraViews.length);
+  return cameraViews;
 };
