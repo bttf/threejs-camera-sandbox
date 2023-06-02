@@ -20,7 +20,7 @@ const Sandbox: FC = () => {
     setCameraViews([cameraView]);
   }, []);
 
-  const addCamera = useCallback(() => {
+  const addPerspectiveCamera = useCallback(() => {
     const newCameraViews = _addCamera({
       type: "perspective",
       fov: 25,
@@ -31,6 +31,18 @@ const Sandbox: FC = () => {
         z: 200 - Math.random() * 400 + 100,
         x: 200 - Math.random() * 400 + 100,
       },
+    });
+    setCameraViews([...newCameraViews]);
+  }, [setCameraViews]);
+
+  const addOrthographicCamera = useCallback(() => {
+    const newCameraViews = _addCamera({
+      type: "orthographic",
+      near: 1,
+      left: -200,
+      right: 200,
+      top: 200,
+      bottom: -200,
     });
     setCameraViews([...newCameraViews]);
   }, [setCameraViews]);
@@ -55,9 +67,15 @@ const Sandbox: FC = () => {
 
           <button
             className="my-2 px-2 py-1 bg-blue-300 rounded"
-            onClick={addCamera}
+            onClick={addOrthographicCamera}
           >
-            + Add Camera
+            + Add Orthographic Camera
+          </button>
+          <button
+            className="my-2 px-2 py-1 bg-blue-300 rounded"
+            onClick={addPerspectiveCamera}
+          >
+            + Add Perspective Camera
           </button>
         </div>
         <Camera
