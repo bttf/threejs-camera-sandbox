@@ -3,8 +3,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import clsx from "clsx";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { CameraView } from "@/app/lib/cameraWorld";
+import PerspectiveControls from "./PerspectiveControls";
+import OrthographicControls from "./OrthographicControls";
 
 const Camera: FC<{
   cameraView: CameraView;
@@ -17,6 +19,10 @@ const Camera: FC<{
   const [orbitControls, setOrbitControls] = useState<OrbitControls | null>(
     null
   );
+  const cameraType =
+    cameraView.camera instanceof THREE.PerspectiveCamera
+      ? "perspective"
+      : "orthographic";
 
   useEffect(() => {
     if (ref.current && canvas && !ref.current.contains(canvas)) {
@@ -42,14 +48,20 @@ const Camera: FC<{
   return (
     <div
       ref={ref}
-      className={clsx("rounded", "overflow-hidden", "w-80", "h-80", {
+      className={clsx("overflow-hidden", "w-80", "h-80", "relative", {
         "border-2 border-red-500": underControl,
 
         "md:w-[40rem]": large,
         "md:h-[40rem]": large,
       })}
       onClick={_onClick}
-    ></div>
+    >
+      {cameraType === "perspective" ? (
+        <PerspectiveControls />
+      ) : (
+        <OrthographicControls />
+      )}
+    </div>
   );
 };
 
